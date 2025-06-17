@@ -47,7 +47,7 @@ jobs:
       if: "${{ env.SENDGRID_API_KEY == '' && (env.MAIL_CONNECTION || env.MAIL_USERNAME != '' && env.MAIL_PASSWORD != '') }}"
       run: echo "DEFINED=true" >> $GITHUB_OUTPUT 
     - name: Send mail
-      uses: dawidd6/action-send-mail@v3
+      uses: dawidd6/action-send-mail@v4
       env:
         DEFINED: ${{ steps.check.outputs.DEFINED }}
       if: ${{ env.DEFINED == 'true' }}
@@ -60,13 +60,6 @@ jobs:
         #  * smtp://user:password@server:port
         #  * smtp+starttls://user:password@server:port
         connection_url: ${{secrets.MAIL_CONNECTION}}
-        # Required mail server address if not connection_url:
-        server_address: smtp.gmail.com
-        # Server port, default 25:
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
-        secure: true
         subject: Personalized arXiv Digest 
         to: ${{ secrets.TO_EMAIL }} 
         from: "Personalized arxiv digest" 
