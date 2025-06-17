@@ -21,6 +21,17 @@ if openai_org is not None:
     openai.organization = openai_org
     logging.warning(f"Switching to organization: {openai_org} for OAI API key.")
 
+# Add DashScope API base and key support
+dashscope_api_base = os.getenv("DASHSCOPE_API_BASE")
+if dashscope_api_base is not None:
+    openai.api_base = dashscope_api_base
+    logging.warning(f"Setting OpenAI API base to: {dashscope_api_base}.")
+
+dashscope_api_key = os.getenv("DASHSCOPE_API_KEY")
+if dashscope_api_key is not None:
+    openai.api_key = dashscope_api_key
+    logging.warning(f"Setting OpenAI API key from DASHSCOPE_API_KEY.")
+
 
 @dataclasses.dataclass
 class OpenAIDecodingArguments(object):
@@ -38,14 +49,14 @@ class OpenAIDecodingArguments(object):
 def openai_completion(
     prompts, #: Union[str, Sequence[str], Sequence[dict[str, str]], dict[str, str]],
     decoding_args: OpenAIDecodingArguments,
-    model_name="text-davinci-003",
+    model_name="qwen-plus",
     sleep_time=2,
     batch_size=1,
     max_instances=sys.maxsize,
     max_batches=sys.maxsize,
     return_text=False,
     **decoding_kwargs,
-) -> Union[Union[StrOrOpenAIObject], Sequence[StrOrOpenAIObject], Sequence[Sequence[StrOrOpenAIObject]],]:
+) -> Union[StrOrOpenAIObject, Sequence[StrOrOpenAIObject], Sequence[Sequence[StrOrOpenAIObject]]]:
     """Decode with OpenAI API.
 
     Args:
@@ -69,7 +80,7 @@ def openai_completion(
             - an openai_object.OpenAIObject object (if return_text is False)
             - a list of objects of the above types (if decoding_args.n > 1)
     """
-    is_chat_model = "gpt-3.5" in model_name or "gpt-4" in model_name
+    is_chat_model = "gpt-3.5" in model_name or "gpt-4" in model_name or "qwen" in model_name
     is_single_prompt = isinstance(prompts, (str, dict))
     if is_single_prompt:
         prompts = [prompts]
