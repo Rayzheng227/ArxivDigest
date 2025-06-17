@@ -90,8 +90,8 @@ def process_subject_fields(subjects):
 def generate_relevance_score(
     all_papers,
     query,
-    model_name="gpt-3.5-turbo-16k",
-    threshold_score=8,
+    model_name="qwen-plus",
+    threshold_score=5,
     num_paper_in_prompt=4,
     temperature=0.4,
     top_p=1.0,
