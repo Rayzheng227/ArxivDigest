@@ -240,11 +240,15 @@ def generate_body(topic, categories, interest, threshold):
                 raise RuntimeError(f"{category} is not a category of {topic}")
         papers = get_papers(abbr)
         print(f"Total papers fetched: {len(papers)}")
-        papers = [
-            t
-            for t in papers
-            if bool(set(process_subject_fields(t["subjects"])) & set(categories))
-        ]
+        
+        filtered_papers = []
+        for paper in papers:
+            paper_subjects = process_subject_fields(paper["subjects"])
+            print(f"Paper subjects: {paper_subjects}")  # 调试信息
+            if any(cat.lower() in [s.lower() for s in paper_subjects] for cat in categories):
+                filtered_papers.append(paper)
+        
+        papers = filtered_papers
         print(f"Papers after category filtering: {len(papers)}")
     else:
         papers = get_papers(abbr)
