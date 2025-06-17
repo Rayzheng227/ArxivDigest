@@ -151,7 +151,13 @@ def generate_relevance_score(
         request_idx += 1
 
     if sorting:
-        ans_data = sorted(ans_data, key=lambda x: int(x["Relevancy score"]), reverse=True)
+        def get_score(paper):
+            score_str = paper["Relevancy score"]
+            if isinstance(score_str, str) and '/' in score_str:
+                return int(score_str.split('/')[0])
+            return int(score_str)
+        
+        ans_data = sorted(ans_data, key=get_score, reverse=True)
     
     print(f"\nFinal results: {len(ans_data)} papers passed the threshold")
     return ans_data, hallucination
