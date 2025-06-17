@@ -231,36 +231,51 @@ def generate_body(topic, categories, interest, threshold):
         abbr = topics[topic]
     else:
         raise RuntimeError(f"Invalid topic {topic}")
+    
+    print(f"Fetching papers for topic: {topic}, abbreviation: {abbr}")
+    
     if categories:
         for category in categories:
             if category not in category_map[topic]:
                 raise RuntimeError(f"{category} is not a category of {topic}")
         papers = get_papers(abbr)
+        print(f"Total papers fetched: {len(papers)}")
         papers = [
             t
             for t in papers
             if bool(set(process_subject_fields(t["subjects"])) & set(categories))
         ]
+        print(f"Papers after category filtering: {len(papers)}")
     else:
         papers = get_papers(abbr)
+        print(f"Total papers fetched: {len(papers)}")
+    
     if interest:
+        print(f"Generating relevance scores with threshold: {threshold}")
+        print(f"Interest statement: {interest}")
         relevancy, hallucination = generate_relevance_score(
             papers,
             query={"interest": interest},
             threshold_score=threshold,
             num_paper_in_prompt=16,
         )
-        body = "<br><br>".join(
-            [
-                f'Title: <a href="{paper["main_page"]}">{paper["title"]}</a><br>Authors: {paper["authors"]}<br>Score: {paper["Relevancy score"]}<br>Reason: {paper["Reasons for match"]}'
-                for paper in relevancy
-            ]
-        )
-        if hallucination:
-            body = (
-                "Warning: the model hallucinated some papers. We have tried to remove them, but the scores may not be accurate.<br><br>"
-                + body
+        print(f"Papers after relevance scoring: {len(relevancy)}")
+        
+        if len(relevancy) == 0:
+            print("Warning: No papers passed the relevance threshold!")
+            body = "No papers found matching your interests with the current threshold."
+        else:
+            body = "<br><br>".join(
+                [
+                    f'Title: <a href="{paper["main_page"]}">{paper["title"]}</a><br>Authors: {paper["authors"]}<br>Score: {paper["Relevancy score"]}<br>Reason: {paper["Reasons for match"]}'
+                    for paper in relevancy
+                ]
             )
+            if hallucination:
+                body = (
+                    "Warning: the model hallucinated some papers. We have tried to remove them, but the scores may not be accurate.<br><br>"
+                    + body
+                )
     else:
         body = "<br><br>".join(
             [

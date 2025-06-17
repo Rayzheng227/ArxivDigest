@@ -97,42 +97,63 @@ def generate_relevance_score(
     top_p=1.0,
     sorting=True
 ):
+    print(f"Starting relevance scoring with {len(all_papers)} papers")
+    print(f"Using model: {model_name}")
+    print(f"Threshold score: {threshold_score}")
+    
     ans_data = []
     request_idx = 1
     hallucination = False
+    
     for id in tqdm.tqdm(range(0, len(all_papers), num_paper_in_prompt)):
         prompt_papers = all_papers[id:id+num_paper_in_prompt]
-        # only sampling from the seed tasks
+        print(f"\nProcessing batch {request_idx} with {len(prompt_papers)} papers")
+        
         prompt = encode_prompt(query, prompt_papers)
+        print("Generated prompt for the model")
 
         decoding_args = utils.OpenAIDecodingArguments(
             temperature=temperature,
             n=1,
-            max_tokens=128*num_paper_in_prompt, # The response for each paper should be less than 128 tokens. 
+            max_tokens=128*num_paper_in_prompt,
             top_p=top_p,
         )
+        
         request_start = time.time()
-        response = utils.openai_completion(
-            prompts=prompt,
-            model_name=model_name,
-            batch_size=1,
-            decoding_args=decoding_args,
-            logit_bias={"100257": -100},  # prevent the <|endoftext|> from being generated
-        )
-        print ("response", response['message']['content'])
+        try:
+            response = utils.openai_completion(
+                prompts=prompt,
+                model_name=model_name,
+                batch_size=1,
+                decoding_args=decoding_args,
+                logit_bias={"100257": -100},
+            )
+            print("Received response from model")
+            print("Response content:", response['message']['content'])
+        except Exception as e:
+            print(f"Error during API call: {str(e)}")
+            continue
+
         request_duration = time.time() - request_start
 
         process_start = time.time()
-        batch_data, hallu = post_process_chat_gpt_response(prompt_papers, response, threshold_score=threshold_score)
-        hallucination = hallucination or hallu
-        ans_data.extend(batch_data)
+        try:
+            batch_data, hallu = post_process_chat_gpt_response(prompt_papers, response, threshold_score=threshold_score)
+            print(f"Processed {len(batch_data)} papers in this batch")
+            hallucination = hallucination or hallu
+            ans_data.extend(batch_data)
+        except Exception as e:
+            print(f"Error during response processing: {str(e)}")
+            continue
 
-        print(f"Request {request_idx+1} took {request_duration:.2f}s")
+        print(f"Request {request_idx} took {request_duration:.2f}s")
         print(f"Post-processing took {time.time() - process_start:.2f}s")
+        request_idx += 1
 
     if sorting:
         ans_data = sorted(ans_data, key=lambda x: int(x["Relevancy score"]), reverse=True)
     
+    print(f"\nFinal results: {len(ans_data)} papers passed the threshold")
     return ans_data, hallucination
 
 def run_all_day_paper(
