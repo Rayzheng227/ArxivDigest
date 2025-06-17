@@ -244,8 +244,10 @@ def generate_body(topic, categories, interest, threshold):
         filtered_papers = []
         for paper in papers:
             paper_subjects = process_subject_fields(paper["subjects"])
-            print(f"Paper subjects: {paper_subjects}")  # 调试信息
-            if any(cat.lower() in [s.lower() for s in paper_subjects] for cat in categories):
+            cleaned_subjects = [s.replace("Subjects:\n", "").strip() for s in paper_subjects]
+            print(f"Paper subjects (cleaned): {cleaned_subjects}")  # 调试信息
+            
+            if any(cat.lower() in [s.lower() for s in cleaned_subjects] for cat in categories):
                 filtered_papers.append(paper)
         
         papers = filtered_papers
