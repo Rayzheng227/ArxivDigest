@@ -11,6 +11,7 @@ import openai
 from relevancy import generate_relevance_score, process_subject_fields
 from download_new_papers import get_papers
 
+load_dotenv()
 
 # Hackathon quality code. Don't judge too harshly.
 # Feel free to submit pull requests to improve the code.
@@ -281,9 +282,15 @@ if __name__ == "__main__":
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
 
-    if "OPENAI_API_KEY" not in os.environ:
+    if "OPENAI_API_KEY" not in os.environ and "DASHSCOPE_API_KEY" not in os.environ:
         raise RuntimeError("No openai api key found")
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
+    
+    if "DASHSCOPE_API_KEY" in os.environ:
+        openai.api_key = os.environ.get("DASHSCOPE_API_KEY")
+        if "DASHSCOPE_API_BASE" in os.environ:
+            openai.api_base = os.environ.get("DASHSCOPE_API_BASE")
+    else:
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
 
     topic = config["topic"]
     categories = config["categories"]

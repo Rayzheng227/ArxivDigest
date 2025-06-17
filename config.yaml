@@ -9,7 +9,7 @@ categories: ["Artificial Intelligence", "Software Engineering"]
 # will have their papers filtered out.
 #
 # Must be within 1-10
-threshold: 1
+threshold: 5
 
 # A natural language statement that the large language model will use to judge which papers are relevant 
 #
@@ -20,8 +20,8 @@ threshold: 1
 #
 # This can be empty, which just return a full list of papers with no judgement or filtering,
 # in whatever order arXiv responds with.
-interest: ""
-# interest: |
-#   1. LLM Agent applications in software engineering
-#   2. Testing and fault localization in autonomous driving systems
-#   3. Summarize papers in Chinese
+# interest: ""
+interest: |
+  1. LLM Agent applications in software engineering
+  2. Testing and fault localization in autonomous driving systems
+  3. Summarize papers in Chinese
