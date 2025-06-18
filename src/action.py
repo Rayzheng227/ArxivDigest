@@ -271,16 +271,31 @@ def generate_body(topic, categories, interest, threshold):
             print("Warning: No papers passed the relevance threshold!")
             body = "No papers found matching your interests with the current threshold."
         else:
-            body = "<br><br>".join(
+            # 添加概括部分
+            summary = f"<h2>今日论文摘要 ({len(relevancy)} 篇相关论文)</h2>"
+            summary += f"<p><strong>研究兴趣：</strong>{interest}</p>"
+            summary += f"<p><strong>筛选条件：</strong>相关性评分 ≥ {threshold}/10</p>"
+            summary += "<hr>"
+            
+            # 生成论文列表
+            papers_html = "<br><br>".join(
                 [
-                    f'Title: <a href="{paper["main_page"]}">{paper["title"]}</a><br>Authors: {paper["authors"]}<br>Score: {paper["Relevancy score"]}<br>Reason: {paper["Reasons for match"]}'
+                    f'<h3>📄 {paper["title"]}</h3>'
+                    f'<p><strong>作者：</strong>{paper["authors"]}</p>'
+                    f'<p><strong>相关性评分：</strong>{paper["Relevancy score"]}</p>'
+                    f'<p><strong>相关原因：</strong>{paper["Reasons for match"]}</p>'
+                    f'<p><strong>论文链接：</strong><a href="{paper["main_page"]}">查看论文</a></p>'
                     for paper in relevancy
                 ]
             )
+            
+            body = summary + papers_html
+            
             if hallucination:
                 body = (
-                    "Warning: the model hallucinated some papers. We have tried to remove them, but the scores may not be accurate.<br><br>"
-                    + body
+                    "<div style='background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 5px;'>"
+                    "<strong>⚠️ 注意：</strong>模型可能对某些论文产生了幻觉。我们已尝试移除这些内容，但评分可能不够准确。"
+                    "</div><br>" + body
                 )
     else:
         body = "<br><br>".join(
