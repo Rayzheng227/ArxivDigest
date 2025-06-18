@@ -49,7 +49,7 @@ class OpenAIDecodingArguments(object):
 def openai_completion(
     prompts, #: Union[str, Sequence[str], Sequence[dict[str, str]], dict[str, str]],
     decoding_args: OpenAIDecodingArguments,
-    model_name="qwen-plus",
+    model_name="qwen-turbo",
     sleep_time=2,
     batch_size=1,
     max_instances=sys.maxsize,

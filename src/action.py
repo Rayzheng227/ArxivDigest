@@ -284,6 +284,7 @@ def generate_body(topic, categories, interest, threshold):
                     f'<p><strong>作者：</strong>{paper["authors"]}</p>'
                     f'<p><strong>相关性评分：</strong>{paper["Relevancy score"]}</p>'
                     f'<p><strong>相关原因：</strong>{paper["Reasons for match"]}</p>'
+                    f'<p><strong>论文概括：</strong>{paper.get("Abstract", "暂无概括")}</p>'
                     f'<p><strong>论文链接：</strong><a href="{paper["main_page"]}">查看论文</a></p>'
                     for paper in relevancy
                 ]

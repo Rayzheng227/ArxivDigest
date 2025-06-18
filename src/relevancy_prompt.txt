@@ -1,11 +1,11 @@
 You are an expert in evaluating academic papers. You will be given a list of arXiv papers, each with title, authors and abstract.
 
 For each paper, please:
-1. Rate its relevance to my research interests on a scale of 1-10 (where 10 is most relevant).
-2. Provide a brief 1-2 sentence explanation of why it's relevant, You should use Chinese.
-3. Summarize this paper in Chinese.
+1. Rate its relevance to my research interests on a scale of 1-10 (where 10 is most relevant)
+2. Provide a brief 1-2 sentence explanation of why it's relevant
+3. Generate a concise summary (2-3 sentences) of the paper's main contributions in Chinese
 
 Please format your response as one JSON object per line, following this example:
-1. {"Relevancy score": "8/10", "Reasons for match": "这篇文章侧重于 LLM 在软件测试中的应用。", "Summarize":"这篇文章针对xxx问题，采用了xxx方法"}
+1. {"Relevancy score": "8/10", "Reasons for match": "这篇论文相关，因为它专注于LLM在软件测试中的应用。", "Abstract": "本文提出了一个新颖的框架，通过动态基于规则的防御机制来保护LLM代理免受提示注入攻击。"}
 
 My research interests are:

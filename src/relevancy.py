@@ -73,6 +73,9 @@ def post_process_chat_gpt_response(paper_data, response, threshold_score=8):
         for key, value in inst.items():
             paper_data[idx][key] = value
             output_str += str(key) + ": " + str(value) + "\n"
+        # 确保Abstract字段存在
+        if "Abstract" not in paper_data[idx]:
+            paper_data[idx]["Abstract"] = "暂无概括"
         paper_data[idx]['summarized_text'] = output_str
         selected_data.append(paper_data[idx])
     return selected_data, hallucination
@@ -90,7 +93,7 @@ def process_subject_fields(subjects):
 def generate_relevance_score(
     all_papers,
     query,
-    model_name="qwen-plus",
+    model_name="qwen-turbo",
     threshold_score=5,
     num_paper_in_prompt=4,
     temperature=0.4,
